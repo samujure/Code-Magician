@@ -1,86 +1,62 @@
 <!DOCTYPE html>
 <html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<meta
-			http-equiv="Content-Security-Policy"
-			content="default-src 'self'; frame-src 'self' http://localhost:3000; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline';"
-		/>
-		<title>Code-Magician</title>
-		<link rel="stylesheet" href="styles.css" />
-	</head>
-	<body>
-		<div id="editor-container">
-			<div id="floating-window">
-				<div id="window-header">
-					<span> Code-Magician</span>
-				</div>
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Code Magician</title>
+    <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+    <div id="dashboard-container">
+        <!-- Sidebar -->
+        <div id="sidebar">
+            <div id="sidebar-header">
+                <span>CODE MAGICIAN</span>
+            </div>
 
-				<div class="button-container">
-					<button id="undo-btn" onclick="undoAction()">Undo</button>
-					<button id="redo-btn" onclick="redoAction()">Redo</button>
-				</div>
+            <div class="input-group">
+                <button class="action-btn" id="undo-btn">&larr;</button>
+                <button class="action-btn" id="redo-btn">&rarr;</button>
+            </div>
 
-				<div style="margin: 10px 0">
-					<input
-						type="text"
-						id="project-dir-input"
-						placeholder="Enter project directory"
-					/>
-					<button onclick="submitProjectDir()">Submit</button>
-				</div>
-				<div id="project-display">Project Directory: None</div>
+            <div class="input-group">
+                <input type="text" id="component-search" placeholder="Show components..." />
+            </div>
 
-				<div id="component-display">Component: None</div>
+            <div class="button-container">
+                <button class="action-btn" id="edit-btn">Edit</button>
+                <button class="action-btn" id="new-btn">Make new</button>
+            </div>
 
-				<button id="toggle-code-btn" onclick="toggleCodeEditor()">
-					Show/Hide Code
-				</button>
+            <div class="menu-toggle">
+                <button id="toggle-edit-btn">Toggle Edit Mode</button>
+            </div>
+        </div>
 
-				<div id="search-and-list">
-					<div>
-						<input type="text" id="search-input" placeholder="Search components..." />
-						<button id="search-btn" onclick="searchComponents()">Search</button>
-					</div>
-					<div id="name-list">
-				
-					</div>
-				</div>
+        <!-- Main Content -->
+        <div id="main-content">
+            <!-- Electron content will now render here -->
+            <!-- You can add any content that was previously below the iframe -->
+            
+            <!-- Example placeholder content -->
+            <div id="electron-content">
+                <!-- Your Electron app's content will display here -->
+            </div>
 
-				<span class="button-container">
-					<input type="text" id="text-input" placeholder="Enter text here" />
-					<button onclick="sendInput('edit')">Edit</button>
-					<button onclick="sendInput('new')">Make New</button>
-				</span>
+            <div id="input-bar">
+                <button id="attach-files-btn" class="icon-btn">📎</button>
+                <textarea id="search-input" placeholder="Type your prompt here..."></textarea>
+                <button id="enter-btn" class="icon-btn">▲</button>
+            </div>
 
-				<span class="button-container">
-					<button id="mobile-btn" onclick="simulateSize('mobile')">
-						Mobile
-					</button>
-					<button id="tablet-btn" onclick="simulateSize('tablet')">
-						Tablet
-					</button>
-					<button id="pc-btn" onclick="simulateSize('pc')">PC</button>
-				</span>
+            <div class="code-buttons">
+                <button id="save-code-btn">Save</button>
+                <button id="close-code-btn">Close</button>
+                <button id="publish-code-btn">Publish</button>
+            </div>
+        </div>
+    </div>
 
-				<button id="edit-btn" onclick="toggleEditMode()">
-					Toggle Edit Mode
-				</button>
-			</div>
-
-			<div id="code-editor">
-				<textarea id="code-area" placeholder="Edit code here..."
-                
-                
-                ></textarea>
-				<button id="save-code-btn" onclick="saveEdit()">Save</button>
-				<button id="close-code-btn" onclick="toggleCodeEditor()">Close</button>
-				<button id="publish-code-btn" onclick="publishEdit()">Publish</button>
-			</div>
-		</div>
-
-		<script src="drag.js"></script>
-		<script src="index.js"></script>
-	</body>
+    <script src="index.js"></script>
+</body>
 </html>

@@ -15,7 +15,7 @@ let translatedY = 0;
 
 const createWindow = () => {
 	const { width, height } = screen.getPrimaryDisplay().workAreaSize;
-
+	
 	const win = new BrowserWindow({
 		width,
 		height,
@@ -40,7 +40,8 @@ const createWindow = () => {
 	});
 	win.contentView.addChildView(view);
 	view.webContents.loadURL("http://localhost:3000");
-	view.setBounds({ x: 0, y: 0, width: width, height });
+	console.log(height);
+	view.setBounds({ x: 400, y: 0, width: width - 400, height: height - 235});
 
 	const toggleEditMode = () => {
 		view.webContents.executeJavaScript(`
@@ -190,7 +191,7 @@ const createWindow = () => {
 				viewHeight = 1024;
 				break;
 			case "pc":
-				viewWidth = width;
+				viewWidth = 500;
 				viewHeight = height;
 				break;
 			default:
@@ -242,7 +243,7 @@ const createWindow = () => {
 		}
 	});
 
-	let globalComponentKeyword = "initialize"
+	let globalComponentKeyword = "all"
 
 	ipcMain.on("click-event", (event, data) => {
 		if (!projectDir) {

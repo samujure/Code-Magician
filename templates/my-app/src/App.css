@@ -1,10 +1,23 @@
 .container {
   text-align: center;
   color: red; /* Changed from green to red */
+  font-family: 'Arial', sans-serif; /* Apply a professional font */
 }
 
 .rainbow-text {
   background: linear-gradient(to right, red, orange, yellow, green, blue, indigo, violet);
   -webkit-background-clip: text;
+  background-clip: text; /* Standard property */
   -webkit-text-fill-color: transparent;
+}
+
+.purple-text {
+  color: purple;
+  text-align: left;
+}
+
+.description-text {
+  font-size: 1.2em;
+  color: #333;
+  margin-bottom: 20px;
 }
