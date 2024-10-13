@@ -9,7 +9,7 @@ const path = require("node:path");
 const fs = require("fs");
 const axios = require("axios");
 
-let projectDir = "C:\\Users\\edmun\\Desktop\\VSCode Projects\\SmartyPantsUI\\templates\\my-app\\src\\App.tsx"; // Variable to store the project directory path
+let projectDir = "C:\\Users\\edmun\\Desktop\\VSCode Projects\\Code-Magician\\templates\\my-app\\src\\App.tsx"; // Variable to store the project directory path
 let translatedX = 0;
 let translatedY = 0;
 
@@ -54,7 +54,6 @@ const createWindow = () => {
                if (window.element){
                  window.element.style.backgroundColor = window.originalBackgroundColor;
                }
-              
 
                // Clear the handlers array after removing event listeners
                window.persistentHandlers = [];
@@ -70,7 +69,7 @@ const createWindow = () => {
                                e.preventDefault();
                                window.element = this;
                                window.originalBackgroundColor = this.style.backgroundColor;
-                               this.style.backgroundColor = "rgba(255, 165, 0)";
+                               this.style.backgroundColor = "rgba(255, 0, 0)";
                            },
                            mouseout: function(e) {
                                e.stopPropagation();
@@ -79,30 +78,41 @@ const createWindow = () => {
                                window.element = null;
                            },
                            click: function(e) {
-                               e.stopPropagation();
-                               e.preventDefault();
-                               let targetElement = e.target;
-                               while (targetElement && !targetElement.hasAttribute('data-component')) {
-                                   targetElement = targetElement.parentElement;
-                               }
-                               if (targetElement && targetElement.hasAttribute('data-component')) {
+								e.stopPropagation();
+								e.preventDefault();
+
+								// Get the clicked element
+								window.element = this;
+								
+								let targetElement = e.target;
+
+								// Traverse up to find an element with a 'data-component' attribute
+								while (targetElement && !targetElement.hasAttribute('data-component')) {
+									targetElement = targetElement.parentElement;
+								}
+
+								if (targetElement && targetElement.hasAttribute('data-component')) {
                                    const dataComponentValue = targetElement.getAttribute('data-component');
+								   alert(dataComponentValue);
                                    window.electron.sendEvent("click-event", { component: dataComponentValue });
                                }
-                           }
+							}
                        };
-           
+
                        element.addEventListener("mouseover", elementHandlers.mouseover);
                        element.addEventListener("mouseout", elementHandlers.mouseout);
                        element.addEventListener("click", elementHandlers.click);
-           
-                       window.persistentHandlers.push({element: element, handlers: elementHandlers});
+
+                       window.persistentHandlers.push({
+                           element: element,
+                           handlers: elementHandlers
+                       });
                    });
-               } catch (error) {
-                   console.error(error);
+               } catch (e) {
+                   console.error(e);
                }
            }
-       `);
+        `);
 	};
 
 	view.webContents.on("did-finish-load", () => {
@@ -209,6 +219,7 @@ const createWindow = () => {
 				y: data.y,
 			});
 		} else if (data.type === "click") {
+
 			view.webContents.focus();
 
 			view.webContents.debugger.sendCommand("Input.dispatchMouseEvent", {
@@ -231,6 +242,23 @@ const createWindow = () => {
 		}
 	});
 
+	let globalComponentKeyword = "initialize"
+
+	ipcMain.on("click-event", (event, data) => {
+		if (!projectDir) {
+			console.error("Project directory not set");
+			event.reply("component-selected", { error: "Project directory not set" });
+			return;
+		}
+
+		// Use fs to locate the file
+		globalComponentKeyword = data.component;
+		const filePath = path.join(projectDir, data.component);
+
+		// Check if the file exists
+		// displayComponent(filePath);
+	});
+
 	ipcMain.on("save-edit", (event, data) => {
 		const { path, content } = data;
 		fs.writeFile(path, content, (err) => {
@@ -242,13 +270,13 @@ const createWindow = () => {
 		});
 	});
 
-	const makeEdits = (requested_change, filepath, csspath) => {
+	const makeEdits = (requested_change, filepath, csspath, component_keyword) => {
+		console.log("is componen t klyeword CHILLL", component_keyword);
 		fs.readFile(filepath, "utf8", (err, componentContent) => {
 			if (err) {
 				console.error(`Error reading file ${filepath}:`, err);
 				return;
 			}
-
 
 			fs.readFile(csspath, "utf8", (err, stylesheetContent) => {
 				if (err) {
@@ -264,10 +292,10 @@ const createWindow = () => {
 					tweaks: {
 						//"Prompt-Y2aTm": {},        // New keys as per new format
 						"TextInput-gLiSp": { input_value: requested_change },
-						"TextInput-34WLE": { input_value: stylesheetContent },  // stylesheetContent
-						"TextInput-Xwk6R": { input_value: componentContent }, 
-						//"TextOutput-nxhhC": {},   // New key
-						"OllamaModel-gkIzl": {}    // New key
+						"TextInput-34WLE": { input_value: componentContent },  // stylesheetContent
+						"TextInput-Xwk6R": { input_value: stylesheetContent }, 
+						"OpenAIModel-kXvtZ": {},
+						"TextInput-WbI5U": { input_value: component_keyword }
 					},
 				};
 				
@@ -292,7 +320,7 @@ const createWindow = () => {
 						}
 	
 						// Extract UPDATED REACT COMPONENT
-						const updatedReactComponent = extractSection(text, "```jsx");
+						const updatedReactComponent = extractSection(text, "```tsx");
 						console.log("UPDATED REACT COMPONENT:", updatedReactComponent);
 	
 						// Extract UPDATED STYLESHEET
@@ -328,14 +356,14 @@ const createWindow = () => {
 		console.log("Input event received:", data);
 		let requested_change = data.input;
 		const filepath = data.path;
-		const csspath = data.path.replace(".tsx", ".css").replace(".jsx", ".css");
+		const csspath = data.path.replace(".tsx", ".css");
 	
 		console.log("Filepath:", filepath);
 		console.log("CSS Filepath:", csspath);
 		if (data.operation === "edit") {
 			// Read contents from path
 			// console.log("Requested Change:", requested_change); Requested change works
-			makeEdits(requested_change, filepath, csspath);
+			makeEdits(requested_change, filepath, csspath, globalComponentKeyword);
 		} else if (data.operation === "new") {     
 			const postData = {
 				input_value: requested_change, // Replace "message" with your actual input value if necessary
@@ -346,8 +374,8 @@ const createWindow = () => {
 					"TextInput-2VbVx": {},
 					"TextOutput-SDzoG": {},
 					"Prompt-ID87b": {},
-					"OllamaModel-2Sltu": {},
-					"OllamaModel-WTYh0": {}
+					"OpenAIModel-sMxtT": {},
+  					"OpenAIModel-ZKR6O": {}
 				},
 			};
 		
@@ -367,48 +395,20 @@ const createWindow = () => {
 						const endIndex = fullText.indexOf("```", startIndex);
 						return fullText.substring(startIndex, endIndex).trim();
 					}
-
-					function extractFileName(text) {
-						let result = '';
-						let start = -1;
-
-						for (let i = 0; i < text.length; i++) {
-						  if (text[i] === '*') {
-							if(i<text.Length-1){
-								text = text.substring(0,i) + text.substring(i+1, text.Length);
-								i--;
-							}else if(i===text.Length){
-								text = text.substring(0,i);
-							}else{
-								break;
-							}
-
-							/*
-							if (start === -1) {
-							  start = i;
-							} else {
-							  result = text.substring(start + 1, i);
-							  break;
-							}
-							*/
-						  }
-						}
-						return result;
-					  }
 					  
 	
-					let filename = extractFileName(text); // CHANGED FROM CONST TO VAR
+					let filename = extractSection(text, "```plaintext"); 
 					console.log("Filename LINE 389:", filename);
 	
 					// Extract UPDATED REACT COMPONENT
-					const newReactComponent = extractSection(text, "```jsx");
+					const newReactComponent = extractSection(text, "```tsx");
 					console.log("NEW REACT COMPONENT:", newReactComponent);
 	
 					// Extract UPDATED STYLESHEET
 					const newStyleSheet = extractSection(text, "```css");
 					console.log("NEW STYLESHEET:", newStyleSheet);
 					
-					Testing_projectDir = "C:\\Users\\edmun\\Desktop\\VSCode Projects\\SmartyPantsUI\\templates\\my-app\\src"
+					Testing_projectDir = "C:\\Users\\edmun\\Desktop\\VSCode Projects\\Code-Magician\\templates\\my-app\\src"
 					const directory = Testing_projectDir; // POSSIBLE_ERROR (was projectDir)
 	
 					// Ensure the directory exists
@@ -417,7 +417,6 @@ const createWindow = () => {
 					}
 	
 					// Create and write the .tsx file
-					// filename = TESTFILE
 					const tsxFilePath = path.join(directory, `${filename}.tsx`);
 					fs.writeFileSync(tsxFilePath, newReactComponent, "utf8");
 					console.log(`File written: ${tsxFilePath}`);
@@ -431,7 +430,7 @@ const createWindow = () => {
 						`The new component ${filename} has been created at ${tsxFilePath}.
 					Simply add the new component to this React component in the appropriate location while keeping the requested change in mind:` +
 						requested_change;
-					makeEdits(requested_change, filepath, csspath); 
+					makeEdits(requested_change, filepath, csspath, globalComponentKeyword); 
 				})
 				.catch((error) => {
 					console.error("Error making POST request:", error);
@@ -487,7 +486,7 @@ const createWindow = () => {
 		// Use fs to locate the file
 		const filePath = data.path;
 
-		displayComponent(filePath);
+		// displayComponent(filePath);
 	});
 
 	ipcMain.on("toggle-edit-mode", (event, data) => {
@@ -495,19 +494,7 @@ const createWindow = () => {
 	});
 
 	// Listen for
-	ipcMain.on("click-event", (event, data) => {
-		if (!projectDir) {
-			console.error("Project directory not set");
-			event.reply("component-selected", { error: "Project directory not set" });
-			return;
-		}
-
-		// Use fs to locate the file
-		const filePath = path.join(projectDir, data.component);
-
-		// Check if the file exists
-		displayComponent(filePath);
-	});
+	
 
 	ipcMain.on("set-project-dir", (event, path) => {
 		projectDir = path; // Set the project directory
@@ -570,7 +557,7 @@ const createWindow = () => {
 	
 
 	function getComponents ()  {
-		console.log("getComponents was called")
+		console.log("getComponents was called");
 		fetch(
 			"http://127.0.0.1:7860/api/v1/run/b2fbc41e-2152-4d8b-a355-308947137b8f?stream=false",
 			{
@@ -579,15 +566,14 @@ const createWindow = () => {
 					"Content-Type": "application/json",
 				},
 				body: JSON.stringify({
-					input_value: "all", // Replace with the actual value you want to send , POSSIBLE_ERROR
 					output_type: "text",
 					input_type: "text",
 					tweaks: {
 						"AstraVectorStoreComponent-oJMfx": {},
-						"TextInput-dCgP1": {},
+						"TextInput-dCgP1": {input_value: "all"},
 						"TextOutput-0anA0": {},
 						"StringifyData-RUBvF": {},
-						"OllamaEmbeddings-0bqsq": {}
+						"OpenAIEmbeddings-dQbZg": {}
 					}
 				}),
 			}
@@ -596,9 +582,8 @@ const createWindow = () => {
 		.then((data) => {
 			let namesList = JSON.parse(
 				data.outputs[0].outputs[0].results.text.data.text
-			);
-			//console.log(namesList);
-
+			)
+			console.log("full API Response (CP Retrieval):", JSON.stringify(data, null, 2));// Log the response for debugging
 			// filter out any that dont have .path
 			namesList = namesList.filter((item) => item.path);
 
@@ -617,6 +602,7 @@ const createWindow = () => {
 			});
 
 			// send to floating window
+			console.log(namesList);
 			floatingView.webContents.send("components", namesList);
 		})
 		.catch((error) => console.error("Error:", error));

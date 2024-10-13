@@ -1,0 +1,68 @@
+/* Apply some basic styling to the body */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f0f0f0;
+  }
+  
+  /* Center the content within the div */
+  div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    flex-direction: column; /* Added to stack elements vertically */
+  }
+  
+  /* Style the heading */
+  h1 {
+    color: green; /* Changed from blue to green */
+    font-size: 2.5rem;
+    text-align: center;
+  }
+  
+  /* Make the text huge */
+  .huge-text {
+    font-size: 4rem; /* Increased font size for huge text */
+  }
+  
+  /* Make the text italic */
+  .italic-text {
+    font-style: italic;
+  }
+  
+  /* Style the form labels and button */
+  label, button {
+    color: green; /* Changed from blue to green */
+  }
+  
+  /* Add a heart shape */
+  .heart {
+    width: 100px;
+    height: 100px;
+    background-color: red;
+    position: relative;
+    transform: rotate(-45deg);
+    margin: 20px 0;
+  }
+  
+  .heart::before,
+  .heart::after {
+    content: "";
+    width: 100px;
+    height: 100px;
+    background-color: red;
+    border-radius: 50%;
+    position: absolute;
+  }
+  
+  .heart::before {
+    top: -50px;
+    left: 0;
+  }
+  
+  .heart::after {
+    left: 50px;
+    top: 0;
+  }

@@ -1,7 +1,7 @@
 // For handling undo/redo
 let history = [];
 let currentHistoryIndex = -1;
-let path = "C:\\Users\\edmun\\Desktop\\VSCode Projects\\SmartyPantsUI\\templates\\my-app\\src\\App.tsx";
+let path = "C:\\Users\\edmun\\Desktop\\VSCode Projects\\Code-Magician\\templates\\my-app\\src\\App.tsx";
 
 function saveEdit(){
     const content = document.getElementById('code-area').value;
