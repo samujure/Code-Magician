@@ -70,7 +70,7 @@ const createWindow = () => {
                                e.preventDefault();
                                window.element = this;
                                window.originalBackgroundColor = this.style.backgroundColor;
-                               this.style.backgroundColor = "rgba(255, 0, 0)";
+                               this.style.backgroundColor = "rgba(255, 0, 0, 0.1)";
                            },
                            mouseout: function(e) {
                                e.stopPropagation();
@@ -367,21 +367,20 @@ const createWindow = () => {
 			makeEdits(requested_change, filepath, csspath, globalComponentKeyword);
 		} else if (data.operation === "new") {     
 			const postData = {
-				input_value: requested_change, // Replace "message" with your actual input value if necessary
 				output_type: "text",    // Required output type
 				input_type: "text",     // Required input type
 				tweaks: {
-					"Prompt-CvKnl": {},
-					"TextInput-2VbVx": {},
-					"TextOutput-SDzoG": {},
-					"Prompt-ID87b": {},
-					"OpenAIModel-sMxtT": {},
-  					"OpenAIModel-ZKR6O": {}
+					"TextInput-TGcmy": { input_value: requested_change},
+					"OpenAIModel-37D73": {},
+					"Prompt-hNFLN": {},
+					"Prompt-xrClq": {},
+					"OpenAIModel-wJ1Xg": {},
+					"TextOutput-CmEql": {}
 				},
 			};
 		
 			axios
-				.post("http://127.0.0.1:7860/api/v1/run/coder-1?stream=false", postData, { headers: { 'Content-Type': 'application/json' } }) // Set content type header
+				.post("http://127.0.0.1:7860/api/v1/run/252fae82-fa16-46e2-9b4b-6767650ef5ba?stream=false", postData, { headers: { 'Content-Type': 'application/json' } }) // Set content type header
 				.then((response) => {
 					const text =
 						response.data.outputs[0].outputs[0].results.text.data.text;
@@ -428,8 +427,8 @@ const createWindow = () => {
 					console.log(`File written: ${cssFilePath}`);
 	
 					requested_change =
-						`The new component ${filename} has been created at ${tsxFilePath}.
-					Simply add the new component to this React component in the appropriate location while keeping the requested change in mind:` +
+						`The new page ${filename} has been created at ${tsxFilePath}. Make sure any necessary libraries are imported for the following step.
+					Simply link the new page to this React component in the appropriate location while keeping the requested change in mind:` +
 						requested_change;
 					makeEdits(requested_change, filepath, csspath, globalComponentKeyword); 
 				})

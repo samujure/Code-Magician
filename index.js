@@ -2,7 +2,6 @@ let history = [];
 let currentHistoryIndex = -1;
 let path = "C:\\Users\\edmun\\Desktop\\VSCode Projects\\Code-Magician\\templates\\my-app\\src\\App.tsx";
 
-document.addEventListener('DOMContentLoaded', function () {
     // Save Edit functionality
     function saveEdit() {
         const content = document.getElementById('code-area').value;
@@ -52,10 +51,9 @@ document.addEventListener('DOMContentLoaded', function () {
             alert('Please select a component first.');
             return;
         }
-
+    
         const input = document.getElementById('text-input').value;
         document.getElementById('text-input').value = '';  // Clear the input field
-
         console.log('Sending input:', operation, input, path);
         window.electron.sendEvent('input-event', { operation, input, path });
     }
@@ -175,4 +173,3 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('text-input').addEventListener('click', () => {
         document.getElementById('text-input').focus();
     });
-});

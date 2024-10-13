@@ -3,6 +3,10 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<meta
+			http-equiv="Content-Security-Policy"
+			content="default-src 'self'; frame-src 'self' http://localhost:3000; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline';"
+		/>
     <title>Code Magician</title>
     <link rel="stylesheet" href="styles.css" />
 </head>
@@ -24,8 +28,9 @@
             </div>
 
             <div class="button-container">
-                <button class="action-btn" id="edit-btn">Edit</button>
-                <button class="action-btn" id="new-btn">Make new</button>
+				<input type="text" id="text-input" placeholder="Enter text here" />
+				<button onclick="sendInput('edit')">Edit</button>
+				<button onclick="sendInput('new')">Make New</button>
             </div>
 
             <div class="menu-toggle">
@@ -45,7 +50,7 @@
 
             <div id="input-bar">
                 <button id="attach-files-btn" class="icon-btn">📎</button>
-                <textarea id="search-input" placeholder="Type your prompt here..."></textarea>
+                <!-- <textarea id="search-input" placeholder="Type your prompt here..."></textarea> ----->
                 <button id="enter-btn" class="icon-btn">▲</button>
             </div>
 
@@ -57,6 +62,7 @@
         </div>
     </div>
 
+	<script src="drag.js"></script>
     <script src="index.js"></script>
 </body>
 </html>

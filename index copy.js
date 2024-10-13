@@ -44,7 +44,7 @@ function submitProjectDir() {
 }
 
 
-function sendInput(operation) {
+function sendInput1(operation) {
     if (!path) {
         alert('Please select a component first.');
         return;
@@ -52,9 +52,7 @@ function sendInput(operation) {
 
     const input = document.getElementById('text-input').value;
     document.getElementById('text-input').value = '';  // Clear the input field
-
     console.log('Sending input:', operation, input, path);
-
     window.electron.sendEvent('input-event', { operation, input, path });
 }
 
